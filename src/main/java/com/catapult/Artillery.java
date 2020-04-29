@@ -12,12 +12,27 @@ import java.util.Observer;
  */
 public class Artillery implements Observer {
 
+    /**
+     * 炮兵可用的弹药箱。
+     */
     private AmmoBox ammoBox;
 
+    /**
+     * 是否具备开炮条件。
+     */
     private boolean canFire;
 
     public Artillery(AmmoBox ammoBox) {
         this.ammoBox = ammoBox;
+    }
+
+    public void fire() {
+        if (! canFire) {
+            System.out.println("炮兵：上刺刀。");
+            return;
+        }
+        System.out.println("炮兵：上意大利炮。");
+        ammoBox.consume();
     }
 
     public void update(Observable o, Object arg) {
@@ -28,14 +43,5 @@ public class Artillery implements Observer {
             System.out.println("炮兵：弹药告罄。");
             canFire = false;
         }
-    }
-
-    public void fire() {
-        if (! canFire) {
-            System.out.println("炮兵：上刺刀。");
-            return;
-        }
-        System.out.println("炮兵：意大利炮。");
-        ammoBox.consume();
     }
 }

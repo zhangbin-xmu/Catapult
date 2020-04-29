@@ -9,6 +9,9 @@ package com.catapult;
  */
 public class Porter {
 
+    /**
+     * 搬运工负责的弹药箱。
+     */
     private AmmoBox ammoBox;
 
     public Porter(AmmoBox ammoBox) {

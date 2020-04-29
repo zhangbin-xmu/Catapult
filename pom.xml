@@ -9,4 +9,8 @@
     <version>1.0.0</version>
     <name>Catapult</name>
 
+    <properties>
+        <skipTests>true</skipTests>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 </project>
