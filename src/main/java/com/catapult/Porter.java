@@ -2,8 +2,6 @@ package com.catapult;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -22,27 +20,51 @@ public class Porter implements Observer {
      */
     private AmmoBox ammoBox;
 
-    private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledExecutorService scheduledExecutorService = null;
 
     public Porter(AmmoBox ammoBox) {
         this.ammoBox = ammoBox;
-        executorService.scheduleAtFixedRate(new Runnable() {
-            public void run() {
-                delivery();
-            }
-        }, 0, 3000, TimeUnit.MILLISECONDS);
+        work();
     }
 
-    public void delivery() {
+    private void delivery() {
         System.out.println("搬运工：运输弹药。");
         ammoBox.supplement(new Ammunition());
     }
 
+    private void work() {
+        scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        synchronized (scheduledExecutorService) {
+            scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+                public void run() {
+                    delivery();
+                }
+            }, 0, 3, TimeUnit.SECONDS);
+        }
+    }
+
+    private void rest() {
+        synchronized (scheduledExecutorService) {
+            if (null != scheduledExecutorService
+                    && ! scheduledExecutorService.isShutdown()) {
+                scheduledExecutorService.shutdown();
+                scheduledExecutorService = null;
+            }
+        }
+    }
+
     public void update(Observable o, Object arg) {
-        if ((Integer) arg > 0) {
-            System.out.println("搬运工：弹药充足。");
-        } else {
-            System.out.println("搬运工：弹药告罄。");
+        if ((Integer) arg >= ammoBox.getCapacity()) {
+            System.out.println("搬运工：弹药库存已满，暂停搬运。");
+            rest();
+            return;
+        }
+
+        int halfCapacity = ammoBox.getCapacity() / 2;
+        if ((Integer) arg <= halfCapacity
+                && null == scheduledExecutorService) {
+            System.out.println("搬运工：弹药库存紧张，加紧搬运。");
+            work();
         }
     }
 }
