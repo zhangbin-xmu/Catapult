@@ -49,7 +49,7 @@ public class Porter implements Observer {
     private void work() {
         if (null == scheduledExecutorService) {
             scheduledExecutorService = new ScheduledThreadPoolExecutor(1,
-                    new ThreadFactoryBuilder().setNameFormat("porter-schedule-pool-%d").build());
+                    new ThreadFactoryBuilder().setNameFormat(name + "-schedule-pool-%d").build());
             scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
                 public void run() {
                     delivery();
