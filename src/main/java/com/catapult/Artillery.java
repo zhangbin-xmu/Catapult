@@ -1,9 +1,11 @@
 package com.catapult;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,8 +35,8 @@ public class Artillery implements Observer {
 
     private void work() {
         if (null == scheduledExecutorService) {
-            scheduledExecutorService = Executors.newScheduledThreadPool(1);/* new ScheduledThreadPoolExecutor(10,
-                    new BasicThreadFactory.Builder().namingPattern("artillery-schedule-pool-%d").daemon(true).build());*/
+            scheduledExecutorService = new ScheduledThreadPoolExecutor(1,
+                    new ThreadFactoryBuilder().setNameFormat("artillery-schedule-pool-%d").build());
             scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
                 public void run() {
                     fire();
