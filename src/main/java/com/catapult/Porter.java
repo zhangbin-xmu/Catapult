@@ -33,37 +33,35 @@ public class Porter implements Observer {
     }
 
     private void work() {
-        scheduledExecutorService = Executors.newScheduledThreadPool(1);
-        synchronized (scheduledExecutorService) {
+        if (null == scheduledExecutorService) {
+            scheduledExecutorService = Executors.newScheduledThreadPool(1);/* new ScheduledThreadPoolExecutor(10,
+                    new BasicThreadFactory.Builder().namingPattern("porter-schedule-pool-%d").daemon(true).build())*/;
             scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
                 public void run() {
                     delivery();
                 }
-            }, 0, 3, TimeUnit.SECONDS);
+            }, 0, 5, TimeUnit.SECONDS);
+            System.out.println("搬运工：开工。");
         }
     }
 
     private void rest() {
-        synchronized (scheduledExecutorService) {
-            if (null != scheduledExecutorService
-                    && ! scheduledExecutorService.isShutdown()) {
-                scheduledExecutorService.shutdown();
-                scheduledExecutorService = null;
-            }
+        if (null != scheduledExecutorService
+                && ! scheduledExecutorService.isShutdown()) {
+            scheduledExecutorService.shutdown();
+            scheduledExecutorService = null;
+            System.out.println("搬运工：休息。");
         }
     }
 
     public void update(Observable o, Object arg) {
         if ((Integer) arg >= ammoBox.getCapacity()) {
-            System.out.println("搬运工：弹药库存已满，暂停搬运。");
             rest();
             return;
         }
 
         int halfCapacity = ammoBox.getCapacity() / 2;
-        if ((Integer) arg <= halfCapacity
-                && null == scheduledExecutorService) {
-            System.out.println("搬运工：弹药库存紧张，加紧搬运。");
+        if ((Integer) arg <= halfCapacity) {
             work();
         }
     }
