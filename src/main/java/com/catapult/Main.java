@@ -16,14 +16,9 @@ public class Main {
         Porter porter = new Porter(ammoBox);
         // 创建一个炮兵。
         Artillery artillery = new Artillery(ammoBox);
-
+        // 搬运工观察弹药箱。
+        ammoBox.addObserver(porter);
         // 炮兵观察弹药箱。
         ammoBox.addObserver(artillery);
-        // 搬运工搬运弹药。
-        porter.delivery();
-        // 炮兵开炮。
-        artillery.fire();
-        // 继续开炮。
-        artillery.fire();
     }
 }

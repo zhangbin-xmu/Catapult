@@ -2,6 +2,9 @@ package com.catapult;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -22,13 +25,21 @@ public class Artillery implements Observer {
      */
     private boolean canFire;
 
+    private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
     public Artillery(AmmoBox ammoBox) {
         this.ammoBox = ammoBox;
+        executorService.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                fire();
+            }
+        }, 0, 3000, TimeUnit.MILLISECONDS);
     }
 
     public void fire() {
         if (! canFire) {
             System.out.println("炮兵：上刺刀。");
+            //executorService.shutdownNow();
             return;
         }
         System.out.println("炮兵：上意大利炮。");
@@ -39,6 +50,13 @@ public class Artillery implements Observer {
         if ((Integer) arg > 0) {
             System.out.println("炮兵：弹药充足。");
             canFire = true;
+            if (executorService.isShutdown()) {
+                executorService.scheduleAtFixedRate(new Runnable() {
+                    public void run() {
+                        fire();
+                    }
+                }, 0, 3000, TimeUnit.MILLISECONDS);
+            }
         } else {
             System.out.println("炮兵：弹药告罄。");
             canFire = false;
