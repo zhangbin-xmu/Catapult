@@ -12,13 +12,10 @@ public class Main {
     public static void main(String[] args) {
         // 创建一个弹药箱。
         AmmoBox ammoBox = new AmmoBox();
-        // 创建一个搬运工。
-        Porter porter = new Porter(ammoBox);
-        // 创建一个炮兵。
-        Artillery artillery = new Artillery(ammoBox);
         // 搬运工观察弹药箱。
-        ammoBox.addObserver(porter);
+        ammoBox.addObserver(new Porter("搬运工A", ammoBox));
+        ammoBox.addObserver(new Porter("搬运工B", ammoBox));
         // 炮兵观察弹药箱。
-        ammoBox.addObserver(artillery);
+        ammoBox.addObserver(new Artillery("炮兵甲", ammoBox));
     }
 }

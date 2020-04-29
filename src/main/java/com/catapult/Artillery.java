@@ -1,6 +1,9 @@
 package com.catapult;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -15,7 +18,15 @@ import java.util.concurrent.TimeUnit;
  * @author zhangbin
  * @date 2020-04-29
  */
+@Slf4j
 public class Artillery implements Observer {
+
+    /**
+     * 炮兵的名字。
+     */
+    @Getter
+    @Setter
+    private String name;
 
     /**
      * 炮兵可用的弹药箱。
@@ -24,12 +35,13 @@ public class Artillery implements Observer {
 
     private ScheduledExecutorService scheduledExecutorService = null;
 
-    public Artillery(AmmoBox ammoBox) {
+    public Artillery(String name, AmmoBox ammoBox) {
+        this.name = name;
         this.ammoBox = ammoBox;
     }
 
     private void fire() {
-        System.out.println("炮兵：意大利炮。");
+        log.info("{}：意大利炮！", name);
         ammoBox.consume();
     }
 
@@ -41,8 +53,8 @@ public class Artillery implements Observer {
                 public void run() {
                     fire();
                 }
-            }, 0, 3, TimeUnit.SECONDS);
-            System.out.println("炮兵，就位。");
+            }, 0, 5, TimeUnit.SECONDS);
+            log.info("{}：就位。", name);
         }
     }
 
@@ -51,7 +63,7 @@ public class Artillery implements Observer {
                 && ! scheduledExecutorService.isShutdown()) {
             scheduledExecutorService.shutdown();
             scheduledExecutorService = null;
-            System.out.println("炮兵：隐蔽。");
+            log.info("{}：隐蔽。", name);
         }
     }
 

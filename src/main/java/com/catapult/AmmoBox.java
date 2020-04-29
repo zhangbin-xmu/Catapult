@@ -1,6 +1,7 @@
 package com.catapult;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Observable;
 import java.util.Vector;
@@ -12,6 +13,7 @@ import java.util.Vector;
  * @author zhangbin
  * @date 2020-04-29
  */
+@Slf4j
 public class AmmoBox extends Observable {
 
     /**
@@ -22,23 +24,23 @@ public class AmmoBox extends Observable {
 
     private Vector<Ammunition> ammunitionVector = new Vector<Ammunition>();
 
-    public void supplement(Ammunition ammunition) {
+    public synchronized void supplement(Ammunition ammunition) {
         if (ammunitionVector.size() >= capacity) {
-            System.out.println(String.format("弹药箱：库存已满，现存弹药【%d】。", ammunitionVector.size()));
+            log.info(String.format("弹药箱：库存已满，现存弹药【%d】。", ammunitionVector.size()));
         } else {
             ammunitionVector.add(ammunition);
-            System.out.println(String.format("弹药箱：弹药补充，现存弹药【%d】。", ammunitionVector.size()));
+            log.info(String.format("弹药箱：弹药补充，现存弹药【%d】。", ammunitionVector.size()));
         }
         super.setChanged();
         super.notifyObservers(ammunitionVector.size());
     }
 
-    public void consume() {
+    public synchronized void consume() {
         if (ammunitionVector.isEmpty()) {
-            System.out.println(String.format("弹药箱：库存已空，现存弹药【%d】。", ammunitionVector.size()));
+            log.info(String.format("弹药箱：库存已空，现存弹药【%d】。", ammunitionVector.size()));
         } else {
             ammunitionVector.remove(0);
-            System.out.println(String.format("弹药箱：弹药消耗，现存弹药【%d】。", ammunitionVector.size()));
+            log.info(String.format("弹药箱：弹药消耗，现存弹药【%d】。", ammunitionVector.size()));
         }
         super.setChanged();
         super.notifyObservers(ammunitionVector.size());
