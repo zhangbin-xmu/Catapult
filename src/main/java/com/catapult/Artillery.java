@@ -41,8 +41,12 @@ public class Artillery implements Observer {
     }
 
     private void fire() {
-        log.info("{}：意大利炮！", name);
-        ammoBox.consume();
+        Ammunition ammunition = ammoBox.consume();
+        if (null == ammunition) {
+            log.info("{}：空炮......", name);
+            return;
+        }
+        log.info("{}：{}！", name, ammunition.getType());
     }
 
     private void work() {

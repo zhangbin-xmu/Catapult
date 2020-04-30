@@ -42,8 +42,9 @@ public class Porter implements Observer {
     }
 
     private void delivery() {
-        log.info("{}：运输弹药。", name);
-        ammoBox.supplement(new Ammunition());
+        Ammunition ammunition = new Ammunition();
+        log.info("{}：运输{}。", name, ammunition.getType());
+        ammoBox.supplement(ammunition);
     }
 
     private void work() {

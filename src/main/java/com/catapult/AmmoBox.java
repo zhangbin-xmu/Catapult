@@ -37,16 +37,19 @@ public class AmmoBox extends Observable {
         super.notifyObservers(ammunitionVector.size());
     }
 
-    public void consume() {
+    public Ammunition consume() {
+        Ammunition ammunition = null;
         synchronized (ammunitionVector) {
             if (ammunitionVector.isEmpty()) {
                 log.info(String.format("弹药箱：库存已空，现存弹药【%d】。", ammunitionVector.size()));
             } else {
+                ammunition = ammunitionVector.get(0);
                 ammunitionVector.remove(0);
                 log.info(String.format("弹药箱：弹药消耗，现存弹药【%d】。", ammunitionVector.size()));
             }
         }
         super.setChanged();
         super.notifyObservers(ammunitionVector.size());
+        return ammunition;
     }
 }
